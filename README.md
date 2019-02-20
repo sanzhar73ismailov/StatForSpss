@@ -11,3 +11,5 @@ Format: `yy.mm.dd.idx`
 History of changes (goes up)
 ver. 19.02.20.01
 	+ First commit
+ver. 19.02.20.02
+	+ get labels from DB by table name
