@@ -1,5 +1,7 @@
 package com.sanzhar.spss.statforspss;
 
+import java.util.Objects;
+
 /**
  *
  * @author admin
@@ -36,6 +38,36 @@ public class VariableLabel {
 
     public void setBooleanType(boolean booleanType) {
         this.booleanType = booleanType;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final VariableLabel other = (VariableLabel) obj;
+        if (this.booleanType != other.booleanType) {
+            return false;
+        }
+        if (!Objects.equals(this.columnName, other.columnName)) {
+            return false;
+        }
+        if (!Objects.equals(this.columnComment, other.columnComment)) {
+            return false;
+        }
+        return true;
     }
     
     

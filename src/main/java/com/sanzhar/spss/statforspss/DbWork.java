@@ -21,23 +21,6 @@ public class DbWork {
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
 
-    public static void main(String[] argv) {
-        try {
-            //List<VariableLabel> listValueLabels = getColumnNamesAndComments("a01");
-            //List<KeyVal> keyVals = getKeyVals("hospital_id");
-            //age_18_and_more_yes_no_id
-            List<ValueLabel> valLabels = getValueLabels("ovarian_general_data");
-            for (ValueLabel valLabel : valLabels){
-                System.out.println("valLabel = " + valLabel);
-            }
-            //System.out.println("valLabels = " + valLabels);
-            //List<KeyVal> keyVals = getKeyVals("age_18_and_more_yes_no_id");
-            //System.out.println(keyVals);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
-
     public static List<VariableLabel> getColumnNamesAndComments(String table) throws SQLException {
         List<VariableLabel> listValueLabels = new ArrayList<>();
         Connection dbConnection = null;
@@ -73,14 +56,14 @@ public class DbWork {
         return listValueLabels;
     }
 
-    public static List<KeyVal> getKeyVals(String varName) throws SQLException {
+    private static List<KeyVal> getKeyVals(String varName) throws SQLException {
         List<KeyVal> listKeyVals = new ArrayList<>();
         Connection dbConnection = null;
         Statement statement = null;
-        String sql = " select dv.value_id, dv.value_name \n"
-                + " from %s_dic_val dv \n"
-                + " where dv.dic_list_id='%s' \n"
-                + " order by dv.dic_list_id, dv.value_id";
+        String sql = " SELECT dv.value_id, dv.value_name \n"
+                + " FROM %s_dic_val dv \n"
+                + " WHERE dv.dic_list_id='%s' \n"
+                + " ORDER BY dv.dic_list_id, dv.value_id";
 
         String query = String.format(sql, DB_NAME, varName);
         try {
@@ -123,6 +106,7 @@ public class DbWork {
                     List<KeyVal> listKeyVals = getKeyVals(varLabel.getColumnName());
                     valLabel.setListKeyVals(listKeyVals);
                 }
+                listValueLabels.add(valLabel);
             }
         }
         return listValueLabels;

@@ -9,6 +9,8 @@ Format: `yy.mm.dd.idx`
 `idx` - sequence number, starts from 1
 
 History of changes (grows up)
+ver. 19.02.22.02
+	+ test for DbWork class
 ver. 19.02.22.01
 	+ get values for dics from DB by var name
 ver. 19.02.20.02
