@@ -8,8 +8,11 @@ Format: `yy.mm.dd.idx`
 `dd`  - day, 2 symbols
 `idx` - sequence number, starts from 1
 
-History of changes (goes up)
-ver. 19.02.20.01
-	+ First commit
+History of changes (grows up)
+ver. 19.02.22.01
+	+ get values for dics from DB by var name
 ver. 19.02.20.02
 	+ get labels from DB by table name
+ver. 19.02.20.01
+	+ First commit
+

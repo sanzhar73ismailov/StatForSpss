@@ -6,6 +6,7 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,18 +23,25 @@ public class DbWork {
 
     public static void main(String[] argv) {
         try {
-             List<VariableLabel> listValueLabels = selectColumnNamesAndComments("a01");
+            //List<VariableLabel> listValueLabels = getColumnNamesAndComments("a01");
+            //List<KeyVal> keyVals = getKeyVals("hospital_id");
+            //age_18_and_more_yes_no_id
+            List<ValueLabel> valLabels = getValueLabels("ovarian_general_data");
+            for (ValueLabel valLabel : valLabels){
+                System.out.println("valLabel = " + valLabel);
+            }
+            //System.out.println("valLabels = " + valLabels);
+            //List<KeyVal> keyVals = getKeyVals("age_18_and_more_yes_no_id");
+            //System.out.println(keyVals);
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public static List<VariableLabel> selectColumnNamesAndComments(String table) throws SQLException {
+    public static List<VariableLabel> getColumnNamesAndComments(String table) throws SQLException {
         List<VariableLabel> listValueLabels = new ArrayList<>();
-
         Connection dbConnection = null;
         Statement statement = null;
-
         String sql = "SELECT column_name, column_comment "
                 + " FROM information_schema.columns "
                 + " WHERE table_schema = '%s' AND TABLE_NAME = '%s'";
@@ -47,8 +55,8 @@ public class DbWork {
             ResultSet rs = statement.executeQuery(query);
             while (rs.next()) {
                 VariableLabel label = new VariableLabel();
-                label.columnName = rs.getString("column_name");
-                label.columnComment = rs.getString("column_comment");
+                label.setColumnName(rs.getString("column_name"));
+                label.setColumnComment(rs.getString("column_comment"));
                 System.out.println("label : " + label);
                 listValueLabels.add(label);
             }
@@ -65,38 +73,83 @@ public class DbWork {
         return listValueLabels;
     }
 
-    private static Connection getDBConnection() {
-
+    public static List<KeyVal> getKeyVals(String varName) throws SQLException {
+        List<KeyVal> listKeyVals = new ArrayList<>();
         Connection dbConnection = null;
+        Statement statement = null;
+        String sql = " select dv.value_id, dv.value_name \n"
+                + " from %s_dic_val dv \n"
+                + " where dv.dic_list_id='%s' \n"
+                + " order by dv.dic_list_id, dv.value_id";
 
+        String query = String.format(sql, DB_NAME, varName);
         try {
-
-            Class.forName(DB_DRIVER);
-
-        } catch (ClassNotFoundException e) {
-
+            dbConnection = getDBConnection();
+            statement = dbConnection.createStatement();
+            System.out.println(query);
+            // execute select SQL stetement
+            ResultSet rs = statement.executeQuery(query);
+            while (rs.next()) {
+                KeyVal keyVal = new KeyVal();
+                keyVal.setKey(rs.getString("value_id"));
+                keyVal.setValue(rs.getString("value_name"));
+                listKeyVals.add(keyVal);
+            }
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } finally {
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+        }
+        return listKeyVals;
+    }
 
+    public static List<ValueLabel> getValueLabels(String table) throws SQLException {
+        List<ValueLabel> listValueLabels = new ArrayList<>();
+
+        List<VariableLabel> listVarLabels = getColumnNamesAndComments(table);
+        for (VariableLabel varLabel : listVarLabels) {
+            if (varLabel.getColumnName().endsWith("_id")) {
+                ValueLabel valLabel = new ValueLabel(varLabel.getColumnName());
+                if (varLabel.getColumnName().endsWith("_yes_no_id")) {
+                    valLabel.setBooleanType(true);
+                    List keyValYesNo = Arrays.asList(new KeyVal("0", "Нет"), new KeyVal("1", "Да"));
+                    valLabel.setListKeyVals(keyValYesNo);
+                } else {
+                    List<KeyVal> listKeyVals = getKeyVals(varLabel.getColumnName());
+                    valLabel.setListKeyVals(listKeyVals);
+                }
+            }
+        }
+        return listValueLabels;
+    }
+
+    private static Connection getDBConnection() {
+        Connection dbConnection = null;
+        try {
+            Class.forName(DB_DRIVER);
+        } catch (ClassNotFoundException e) {
+            System.out.println(e.getMessage());
         }
 
         try {
-
             dbConnection = DriverManager.getConnection(DB_CONNECTION, DB_USER,
                     DB_PASSWORD);
             return dbConnection;
-
         } catch (SQLException e) {
-
             System.out.println(e.getMessage());
-
         }
-
         return dbConnection;
-
     }
 
-    private static void selectRecordsFromDbUserTable() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+
+
+//    private static List<KeyVal> getListKeyVals(String columnName) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
 
 }
