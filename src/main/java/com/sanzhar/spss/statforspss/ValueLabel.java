@@ -43,4 +43,11 @@ public class ValueLabel {
     public void setBooleanType(boolean booleanType) {
         this.booleanType = booleanType;
     }
+
+    @Override
+    public String toString() {
+        return "ValueLabel{" + "label=" + label + ", listKeyVals=" + listKeyVals + ", booleanType=" + booleanType + '}';
+    }
+    
+    
 }

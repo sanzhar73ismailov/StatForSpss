@@ -8,6 +8,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -21,7 +22,11 @@ public class DbWork {
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "";
 
+    private final static Logger LOGGER = Logger.getLogger(DbWork.class);
+
     public static List<VariableLabel> getColumnNamesAndComments(String table) throws SQLException {
+        //LOGGER.debug("START");
+
         List<VariableLabel> listValueLabels = new ArrayList<>();
         Connection dbConnection = null;
         Statement statement = null;
@@ -33,18 +38,18 @@ public class DbWork {
         try {
             dbConnection = getDBConnection();
             statement = dbConnection.createStatement();
-            System.out.println(query);
+            //logger.debug(query);
             // execute select SQL stetement
             ResultSet rs = statement.executeQuery(query);
             while (rs.next()) {
                 VariableLabel label = new VariableLabel();
                 label.setColumnName(rs.getString("column_name"));
                 label.setColumnComment(rs.getString("column_comment"));
-                System.out.println("label : " + label);
+                //logger.debug("label : " + label);
                 listValueLabels.add(label);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("error in getColumnNamesAndComments", e);
         } finally {
             if (statement != null) {
                 statement.close();
@@ -53,10 +58,12 @@ public class DbWork {
                 dbConnection.close();
             }
         }
+        //LOGGER.debug("FINISH");
         return listValueLabels;
     }
 
     private static List<KeyVal> getKeyVals(String varName) throws SQLException {
+        //LOGGER.debug("START");
         List<KeyVal> listKeyVals = new ArrayList<>();
         Connection dbConnection = null;
         Statement statement = null;
@@ -69,7 +76,7 @@ public class DbWork {
         try {
             dbConnection = getDBConnection();
             statement = dbConnection.createStatement();
-            System.out.println(query);
+            //logger.debug(query);
             // execute select SQL stetement
             ResultSet rs = statement.executeQuery(query);
             while (rs.next()) {
@@ -79,7 +86,7 @@ public class DbWork {
                 listKeyVals.add(keyVal);
             }
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("error in getKeyVals", e);
         } finally {
             if (statement != null) {
                 statement.close();
@@ -88,10 +95,12 @@ public class DbWork {
                 dbConnection.close();
             }
         }
+       // LOGGER.debug("FINISH");
         return listKeyVals;
     }
 
     public static List<ValueLabel> getValueLabels(String table) throws SQLException {
+        LOGGER.debug("START, table: " + table);
         List<ValueLabel> listValueLabels = new ArrayList<>();
 
         List<VariableLabel> listVarLabels = getColumnNamesAndComments(table);
@@ -109,15 +118,17 @@ public class DbWork {
                 listValueLabels.add(valLabel);
             }
         }
+        LOGGER.debug("FINISH");
         return listValueLabels;
     }
 
     private static Connection getDBConnection() {
+        //LOGGER.debug("START");
         Connection dbConnection = null;
         try {
             Class.forName(DB_DRIVER);
         } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("error", e);
         }
 
         try {
@@ -125,15 +136,10 @@ public class DbWork {
                     DB_PASSWORD);
             return dbConnection;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            LOGGER.error("error", e);
         }
+        LOGGER.debug("FINISH");
         return dbConnection;
     }
-
-
-
-//    private static List<KeyVal> getListKeyVals(String columnName) {
-//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-//    }
 
 }

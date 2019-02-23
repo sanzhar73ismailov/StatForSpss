@@ -9,6 +9,8 @@ Format: `yy.mm.dd.idx`
 `idx` - sequence number, starts from 1
 
 History of changes (grows up)
+ver. 19.02.23.01
+	+ writing files
 ver. 19.02.22.02
 	+ test for DbWork class
 ver. 19.02.22.01
