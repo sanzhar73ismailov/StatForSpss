@@ -12,8 +12,9 @@ import org.apache.log4j.Logger;
 public class Main {
 
     final static Logger LOGGER = Logger.getLogger(Main.class);
-    final static String REPORT_FOLDER = "c:/temp/spssTest";
-    final static String XLS_FILE_SRC = "c:\\temp\\spssTest\\data.xls";
+    final static String DATA_FOLDER = "c:\\temp\\spssTest";
+    final static String REPORT_FOLDER = DATA_FOLDER + "\\syntax";
+    final static String XLS_FILE_SRC = DATA_FOLDER + "\\data.xls";
 
     public static void main(String[] args) {
 
@@ -30,9 +31,9 @@ public class Main {
 
         Propers propers = new Propers(XLS_FILE_SRC, REPORT_FOLDER, tableInfos);
 
-        MainFileWriter fileWriter = new MainFileWriter(propers);
-        fileWriter.writeMainFile();
-        fileWriter.writeFiles();
+        MainFileWriter mainFileWriter = new MainFileWriter(propers);
+        mainFileWriter.writeMainFile();
+        mainFileWriter.writeFiles();
 
         // final TableInfo tableInfo = new TableInfo("ovarian_general_data");
         // final List<VariableLabel> columnNamesAndComments = tableInfo.getColumnNamesAndComments();

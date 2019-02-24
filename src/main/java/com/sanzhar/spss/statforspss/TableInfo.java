@@ -21,7 +21,7 @@ public class TableInfo {
     public TableInfo(String table, int number) {
         this.table = table;
         this.number = number;
-        this.fileSyntaxName = String.format("%02d", number); 
+        this.fileSyntaxName = String.format("%02d", number) + "_" + table + ".sps"; 
         init();
     }
 

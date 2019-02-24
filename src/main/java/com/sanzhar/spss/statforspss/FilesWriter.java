@@ -11,13 +11,13 @@ import org.apache.log4j.Logger;
 public class FilesWriter {
 
     final static Logger LOGGER = Logger.getLogger(FilesWriter.class);
-    private final String folder;
+    private final String syntaxFolder;
     private final TableInfo tableInfo;
     private final String xlsFile;
 
     public FilesWriter(String xlsFile, String folder, TableInfo info) {
         this.xlsFile = xlsFile;
-        this.folder = folder;
+        this.syntaxFolder = folder;
         this.tableInfo = info;
     }
 
@@ -97,7 +97,8 @@ public class FilesWriter {
     }
 
     public void writeToFile() {
-        String file = this.folder + File.separator + this.tableInfo.getTable() + ".spss";
+       
+        String file = this.syntaxFolder + File.separator + this.tableInfo.getFileSyntaxName();
         StringBuilder stb = new StringBuilder();
         stb.append(getGetDataCommand());
         stb.append("\r\n");
