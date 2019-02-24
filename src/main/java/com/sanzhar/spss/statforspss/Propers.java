@@ -6,9 +6,9 @@ package com.sanzhar.spss.statforspss;
  */
 public class Propers {
 
-    private String xlsFileSrc;
-    private String folder;
-    private TableInfo[] tableInfos;
+    private final String xlsFileSrc;
+    private final String folder;
+    private final TableInfo[] tableInfos;
 
     public Propers(String xlsFileSrc, String folder, TableInfo[] tableInfos) {
         this.xlsFileSrc = xlsFileSrc;

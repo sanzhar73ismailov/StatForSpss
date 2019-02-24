@@ -23,15 +23,13 @@ public class Main {
             "ovarian_general_data",
             "ovarian_instrument"
         };
-        TableInfo [] tableInfos = new TableInfo[tables.length];
+        TableInfo[] tableInfos = new TableInfo[tables.length];
         for (int i = 0; i < tableInfos.length; i++) {
-            tableInfos[i] = new TableInfo(tables[i]);
+            tableInfos[i] = new TableInfo(tables[i], i + 1);
         }
-        
-        Propers propers = new Propers(XLS_FILE_SRC, REPORT_FOLDER, tableInfos);
-        
 
-        
+        Propers propers = new Propers(XLS_FILE_SRC, REPORT_FOLDER, tableInfos);
+
         MainFileWriter fileWriter = new MainFileWriter(propers);
         fileWriter.writeMainFile();
         fileWriter.writeFiles();

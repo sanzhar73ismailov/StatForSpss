@@ -1,7 +1,6 @@
 package com.sanzhar.spss.statforspss;
 
 import org.apache.log4j.Logger;
-import static com.sanzhar.spss.statforspss.Main.REPORT_FOLDER;
 
 /**
  *

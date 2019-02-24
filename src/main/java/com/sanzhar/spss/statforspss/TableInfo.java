@@ -14,9 +14,14 @@ public class TableInfo {
     private String table;
     private List<VariableLabel> columnNamesAndComments;
     private List<ValueLabel> valueLabels;
+    private final int number;
+    private final String fileSyntaxName;
 
-    public TableInfo(String table) {
+
+    public TableInfo(String table, int number) {
         this.table = table;
+        this.number = number;
+        this.fileSyntaxName = String.format("%02d", number); 
         init();
     }
 
@@ -37,6 +42,7 @@ public class TableInfo {
     public void setTable(String table) {
         this.table = table;
     }
+    
 
     public List<VariableLabel> getColumnNamesAndComments() {
         return columnNamesAndComments;
@@ -53,5 +59,15 @@ public class TableInfo {
     public void setValueLabels(List<ValueLabel> valueLabels) {
         this.valueLabels = valueLabels;
     }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public String getFileSyntaxName() {
+        return fileSyntaxName;
+    }
+    
+    
 
 }
