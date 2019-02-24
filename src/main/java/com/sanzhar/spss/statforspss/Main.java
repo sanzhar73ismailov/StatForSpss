@@ -5,33 +5,44 @@ import java.sql.SQLException;
 import java.util.List;
 import org.apache.log4j.Logger;
 
-
-
 /**
  *
  * @author admin
  */
 public class Main {
+
     final static Logger LOGGER = Logger.getLogger(Main.class);
+    final static String REPORT_FOLDER = "c:/temp/spssTest";
+    final static String XLS_FILE_SRC = "c:\\temp\\spssTest\\data.xls";
 
     public static void main(String[] args) {
-        
+
         LOGGER.debug("START");
+
+        String[] tables = {
+            "ovarian_general_data",
+            "ovarian_instrument"
+        };
+        TableInfo [] tableInfos = new TableInfo[tables.length];
+        for (int i = 0; i < tableInfos.length; i++) {
+            tableInfos[i] = new TableInfo(tables[i]);
+        }
         
-        final TableInfo tableInfo = new TableInfo("ovarian_general_data");
-       // final List<VariableLabel> columnNamesAndComments = tableInfo.getColumnNamesAndComments();
+        Propers propers = new Propers(XLS_FILE_SRC, REPORT_FOLDER, tableInfos);
+        
+
+        
+        MainFileWriter fileWriter = new MainFileWriter(propers);
+        fileWriter.writeMainFile();
+        fileWriter.writeFiles();
+
+        // final TableInfo tableInfo = new TableInfo("ovarian_general_data");
+        // final List<VariableLabel> columnNamesAndComments = tableInfo.getColumnNamesAndComments();
         //System.out.println("columnNamesAndComments = " + columnNamesAndComments);
-       // final List<ValueLabel> valueLabels = tableInfo.getValueLabels();
+        // final List<ValueLabel> valueLabels = tableInfo.getValueLabels();
         //System.out.println("valueLabels = " + valueLabels);
-        FilesWriter filesWriter = new FilesWriter("c:/temp/spssTest", tableInfo);
-        //final String str = filesWriter.getVarLabelCommand();
-        final String str = filesWriter.getValueLabelCommand();
-        filesWriter.writeToFile();
         //System.out.println("str = " + str);
-        
-         LOGGER.debug("FINISH");
-        
-     
-    
+        LOGGER.debug("FINISH");
+
     }
 }

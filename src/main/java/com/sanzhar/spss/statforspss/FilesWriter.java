@@ -1,9 +1,6 @@
 package com.sanzhar.spss.statforspss;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import org.apache.log4j.Logger;
 
@@ -14,16 +11,32 @@ import org.apache.log4j.Logger;
 public class FilesWriter {
 
     final static Logger LOGGER = Logger.getLogger(FilesWriter.class);
-    private String folder;
-    private TableInfo info;
+    private final String folder;
+    private final TableInfo tableInfo;
+    private final String xlsFile;
 
-    public FilesWriter(String folder, TableInfo info) {
+    public FilesWriter(String xlsFile, String folder, TableInfo info) {
+        this.xlsFile = xlsFile;
         this.folder = folder;
-        this.info = info;
+        this.tableInfo = info;
+    }
+
+    public String getGetDataCommand() {
+        String tabName = tableInfo.getTable(); // tabName is the same as table name in DB
+        String command = String.format("GET DATA /TYPE=XLSX \r\n"
+                + "  /FILE='%s' \r\n"
+                + "  /SHEET=name '%s' \r\n"
+                + "  /CELLRANGE=full \r\n"
+                + "  /READNAMES=on \r\n"
+                + "  /ASSUMEDSTRWIDTH=32767. \r\n"
+                + "DATASET NAME %s WINDOW=FRONT.\r\n"
+                + "DATASET ACTIVATE %s.\r\n", xlsFile, tabName, tabName, tabName);
+
+        return command;
     }
 
     public String getVarLabelCommand() {
-        final List<VariableLabel> colNamesAndComments = info.getColumnNamesAndComments();
+        final List<VariableLabel> colNamesAndComments = tableInfo.getColumnNamesAndComments();
         StringBuilder stb = new StringBuilder("VARIABLE LABELS\r\n");
         for (VariableLabel colNamesAndComment : colNamesAndComments) {
             String comment = colNamesAndComment.getColumnComment();
@@ -39,7 +52,7 @@ public class FilesWriter {
     }
 
     public String getValueLabelCommand() {
-        final List<ValueLabel> valLabels = info.getValueLabels();
+        final List<ValueLabel> valLabels = tableInfo.getValueLabels();
         StringBuilder stb = new StringBuilder("VARIABLE LABELS\r\n");
         //add boolean types
         for (ValueLabel valueLabel : valLabels) {
@@ -71,59 +84,28 @@ public class FilesWriter {
     }
 
     public String getMissingVals() {
-        final List<VariableLabel> colNamesAndComments = info.getColumnNamesAndComments();
+        final List<VariableLabel> colNamesAndComments = tableInfo.getColumnNamesAndComments();
         StringBuilder stb = new StringBuilder("MISSING VALUES\r\n");
         for (VariableLabel colNamesAndComment : colNamesAndComments) {
-            stb.append(colNamesAndComment.getColumnName()).append("\r\n");
+            if (colNamesAndComment.getColumnName().endsWith("_id")) {
+                stb.append(colNamesAndComment.getColumnName()).append("\r\n");
+            }
         }
         stb.append("(-1).\r\n");
         //LOGGER.debug("stb = " + stb);
         return stb.toString();
     }
-    
+
     public void writeToFile() {
-
-        String file = this.folder + File.separator + this.info.getTable() + ".spss";
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
-
-            StringBuilder stb = new StringBuilder();
-            stb.append(getVarLabelCommand());
-            stb.append("\r\n");
-            stb.append(getValueLabelCommand());
-            stb.append("\r\n");
-            stb.append(getMissingVals());
-            //String content = getVarLabelCommand();
-
-            bw.write(stb.toString());
-
-            // no need to close it.
-            //bw.close();
-            LOGGER.debug("Done");
-        } catch (IOException e) {
-            LOGGER.error("error", e);
-        }
-
+        String file = this.folder + File.separator + this.tableInfo.getTable() + ".spss";
+        StringBuilder stb = new StringBuilder();
+        stb.append(getGetDataCommand());
+        stb.append("\r\n");
+        stb.append(getVarLabelCommand());
+        stb.append("\r\n");
+        stb.append(getValueLabelCommand());
+        stb.append("\r\n");
+        stb.append(getMissingVals());
+        Util.writeToFile(file, stb.toString());
     }
-    private static final String FILENAME = "c:\\temp\\filename.txt";
-
-    public static void main(String[] args) {
-
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(FILENAME))) {
-
-            String content = "This is the content to write into file\n";
-
-            bw.write(content);
-
-            // no need to close it.
-            //bw.close();
-            System.out.println("Done");
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-    }
-
 }
