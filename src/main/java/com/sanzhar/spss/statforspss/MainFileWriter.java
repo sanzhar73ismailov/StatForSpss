@@ -11,7 +11,7 @@ public class MainFileWriter {
 
     final static Logger LOGGER = Logger.getLogger(MainFileWriter.class);
     Propers propers;
-    private TableInfo[] tableInfos;
+    private final TableInfo[] tableInfos;
 
     public MainFileWriter(Propers propers) {
         this.propers = propers;
@@ -31,14 +31,14 @@ public class MainFileWriter {
         StringBuilder stb = new StringBuilder();
         stb.append("CD '").append(Main.DATA_FOLDER).append("'.\r\n");
         for (TableInfo tableInfo : tableInfos) {
-            stb.append("INSERT FILE ='syntax\\").append(tableInfo.getFileSyntaxName()).append("'.\r\n");
+            stb.append("INSERT FILE = 'syntax\\").append(tableInfo.getFileSyntaxName()).append("'.\r\n");
         }
         Util.writeToFile(propers.getFolder() + "\\00_script_general.sps", stb.toString());
     }
 
     public void writeFiles() {
-        for (TableInfo info : propers.getTableInfos()) {
-            writeFile(info);
+        for (TableInfo tableInfo : tableInfos) {
+            writeFile(tableInfo);
         }
     }
 }

@@ -1,8 +1,5 @@
 package com.sanzhar.spss.statforspss;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.List;
 import org.apache.log4j.Logger;
 
 /**
@@ -13,7 +10,7 @@ public class Main {
 
     final static Logger LOGGER = Logger.getLogger(Main.class);
     final static String DATA_FOLDER = "c:\\temp\\spssTest";
-    final static String REPORT_FOLDER = DATA_FOLDER + "\\syntax";
+    final static String SYNTAX_FOLDER = DATA_FOLDER + "\\syntax";
     final static String XLS_FILE_SRC = DATA_FOLDER + "\\data.xls";
 
     public static void main(String[] args) {
@@ -29,7 +26,7 @@ public class Main {
             tableInfos[i] = new TableInfo(tables[i], i + 1);
         }
 
-        Propers propers = new Propers(XLS_FILE_SRC, REPORT_FOLDER, tableInfos);
+        Propers propers = new Propers(XLS_FILE_SRC, SYNTAX_FOLDER, tableInfos);
 
         MainFileWriter mainFileWriter = new MainFileWriter(propers);
         mainFileWriter.writeMainFile();

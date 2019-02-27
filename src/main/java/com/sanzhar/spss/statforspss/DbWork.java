@@ -23,6 +23,44 @@ public class DbWork {
     private static final String DB_PASSWORD = "";
 
     private final static Logger LOGGER = Logger.getLogger(DbWork.class);
+    
+    public static List<List> getData(String table) throws SQLException {
+        //LOGGER.debug("START");
+        List<List> data = new ArrayList<>();
+        Connection dbConnection = null;
+        Statement statement = null;
+        String sql = "SELECT * FROM %s";
+
+        String query = String.format(sql, table);
+        try {
+            dbConnection = getDBConnection();
+            statement = dbConnection.createStatement();
+            //logger.debug(query);
+            ResultSet rs = statement.executeQuery(query);
+            int columnCount = rs.getMetaData().getColumnCount();
+            while (rs.next()) {
+                List row = new ArrayList();
+                int columnUndex = 0;
+                while (columnUndex < columnCount) {
+                    row.add(rs.getString(columnUndex+1));
+                    columnUndex++;
+                    //Object nextElement = columnUndex.nextElement();
+                }
+                data.add(row);
+            }
+        } catch (SQLException e) {
+            LOGGER.error("error in getColumnNamesAndComments", e);
+        } finally {
+            if (statement != null) {
+                statement.close();
+            }
+            if (dbConnection != null) {
+                dbConnection.close();
+            }
+        }
+        //LOGGER.debug("FINISH");
+        return data;
+    }
 
     public static List<VariableLabel> getColumnNamesAndComments(String table) throws SQLException {
         //LOGGER.debug("START");
