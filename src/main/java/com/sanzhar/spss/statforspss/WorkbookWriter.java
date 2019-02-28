@@ -85,9 +85,14 @@ public class WorkbookWriter {
 //                    row.createCell(column++).setCellValue("");
 //                }
                 //Cell cell = row.createCell(column++);
-                if (variableLabel.equals("int") || variableLabel.equals("double")) {
+                String dbType = variableLabel.getDbDataType();
+                if (dbType.equals("int") || dbType.equals("double")) {
                     //cell.setCellType(CellType.NUMERIC);
+                    if(valAsString.trim().isEmpty()){
+                        valAsString = "-1";
+                    }
                     row.createCell(column++, CellType.NUMERIC).setCellValue(Double.parseDouble(valAsString));
+                    //row.createCell(column++, CellType.NUMERIC).setCellValue(valAsString);
 
                 } else {
                     //cell.setCellType(CellType.STRING
