@@ -13,7 +13,7 @@ public class Main {
     final static String SYNTAX_FOLDER = DATA_FOLDER + "\\syntax";
     final static String XLS_FILE_SRC = DATA_FOLDER + "\\data.xls";
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         LOGGER.debug("START");
 
@@ -27,6 +27,13 @@ public class Main {
         }
 
         Propers propers = new Propers(XLS_FILE_SRC, SYNTAX_FOLDER, tableInfos);
+
+        WorkbookWriter workbookWriter = new WorkbookWriter(tableInfos);
+        workbookWriter.writeWorkbook();
+
+        if (1 == 1) {
+            return;
+        }
 
         MainFileWriter mainFileWriter = new MainFileWriter(propers);
         mainFileWriter.writeMainFile();

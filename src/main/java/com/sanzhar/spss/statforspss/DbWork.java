@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.apache.log4j.Logger;
 
 /**
@@ -23,8 +25,8 @@ public class DbWork {
     private static final String DB_PASSWORD = "";
 
     private final static Logger LOGGER = Logger.getLogger(DbWork.class);
-    
-    public static List<List> getData(String table) throws SQLException {
+
+    public static List<List> getDataFromTable(String table) throws SQLException {
         //LOGGER.debug("START");
         List<List> data = new ArrayList<>();
         Connection dbConnection = null;
@@ -38,16 +40,38 @@ public class DbWork {
             //logger.debug(query);
             ResultSet rs = statement.executeQuery(query);
             int columnCount = rs.getMetaData().getColumnCount();
+            int r = 0;
+            Set set = new HashSet();
             while (rs.next()) {
                 List row = new ArrayList();
                 int columnUndex = 0;
                 while (columnUndex < columnCount) {
-                    row.add(rs.getString(columnUndex+1));
+                    final String columnTypeName = rs.getMetaData().getColumnTypeName(columnUndex + 1);
+                    //set=[DATE, TIMESTAMP, VARCHAR, DOUBLE, INT]
+                    /*
+                    Object val = null;
+                    
+                    switch(columnTypeName){
+                        case "INT" : 
+                            val = rs.getInt(columnUndex + 1);
+                            break;
+                        case "DOUBLE"  :
+                            val = rs.getInt(columnUndex + 1)
+                    }
+                    if (r == 0) {
+                        //LOGGER.debug("columnTypeName=" + columnTypeName);
+                        set.add(columnTypeName);
+                    }
+*/
+                    row.add(rs.getString(columnUndex + 1));
                     columnUndex++;
                     //Object nextElement = columnUndex.nextElement();
                 }
+                r++;
                 data.add(row);
             }
+            LOGGER.debug("set=" + set);
+            
         } catch (SQLException e) {
             LOGGER.error("error in getColumnNamesAndComments", e);
         } finally {
@@ -68,21 +92,22 @@ public class DbWork {
         List<VariableLabel> listValueLabels = new ArrayList<>();
         Connection dbConnection = null;
         Statement statement = null;
-        String sql = "SELECT column_name, column_comment "
+        String sql = "SELECT column_name, column_comment, data_type "
                 + " FROM information_schema.columns "
-                + " WHERE table_schema = '%s' AND TABLE_NAME = '%s'";
+                + " WHERE table_schema = '%s' AND TABLE_NAME = '%s' "
+                + " ORDER BY ORDINAL_POSITION";
 
         String query = String.format(sql, DB_NAME, table);
         try {
             dbConnection = getDBConnection();
             statement = dbConnection.createStatement();
             //logger.debug(query);
-            // execute select SQL stetement
             ResultSet rs = statement.executeQuery(query);
             while (rs.next()) {
                 VariableLabel label = new VariableLabel();
                 label.setColumnName(rs.getString("column_name"));
                 label.setColumnComment(rs.getString("column_comment"));
+                label.setDbDataType(rs.getString("data_type"));
                 //logger.debug("label : " + label);
                 listValueLabels.add(label);
             }
@@ -133,7 +158,7 @@ public class DbWork {
                 dbConnection.close();
             }
         }
-       // LOGGER.debug("FINISH");
+        // LOGGER.debug("FINISH");
         return listKeyVals;
     }
 

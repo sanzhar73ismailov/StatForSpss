@@ -7,9 +7,11 @@ import java.util.Objects;
  * @author admin
  */
 public class VariableLabel {
+
     private String columnName;
     private String columnComment;
     private boolean booleanType;
+    private String dbDataType; //int, date, double, varchar, text, timestamp
 
     @Override
     public String toString() {
@@ -38,6 +40,14 @@ public class VariableLabel {
 
     public void setBooleanType(boolean booleanType) {
         this.booleanType = booleanType;
+    }
+
+    public String getDbDataType() {
+        return dbDataType;
+    }
+
+    public void setDbDataType(String dbDataType) {
+        this.dbDataType = dbDataType;
     }
 
     @Override
@@ -69,9 +79,5 @@ public class VariableLabel {
         }
         return true;
     }
-    
-    
 
-    
-    
 }
