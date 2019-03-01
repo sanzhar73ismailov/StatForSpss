@@ -54,7 +54,7 @@ public class WorkbookWriter {
 
             writeSheet(tableInfo, sheet);
         }
-        FileOutputStream fileOut = new FileOutputStream(Main.DATA_FOLDER + "\\data.xlsx");
+        FileOutputStream fileOut = new FileOutputStream(Main.XLS_FILE_SRC);
         workbook.write(fileOut);
         fileOut.close();
 

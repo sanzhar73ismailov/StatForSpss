@@ -23,6 +23,7 @@ public class FilesWriter {
 
     public String getGetDataCommand() {
         String tabName = tableInfo.getTable(); // tabName is the same as table name in DB
+        String fName = new File(xlsFile).getName();
         String command = String.format("GET DATA /TYPE=XLSX \r\n"
                 + "  /FILE='%s' \r\n"
                 + "  /SHEET=name '%s' \r\n"
@@ -30,7 +31,7 @@ public class FilesWriter {
                 + "  /READNAMES=on \r\n"
                 + "  /ASSUMEDSTRWIDTH=32767. \r\n"
                 + "DATASET NAME %s WINDOW=FRONT.\r\n"
-                + "DATASET ACTIVATE %s.\r\n", xlsFile, tabName, tabName, tabName);
+                + "DATASET ACTIVATE %s.\r\n", fName, tabName, tabName, tabName);
 
         return command;
     }
@@ -53,7 +54,7 @@ public class FilesWriter {
 
     public String getValueLabelCommand() {
         final List<ValueLabel> valLabels = tableInfo.getValueLabels();
-        StringBuilder stb = new StringBuilder("VARIABLE LABELS\r\n");
+        StringBuilder stb = new StringBuilder("VALUE LABELS\r\n");
         //add boolean types
         for (ValueLabel valueLabel : valLabels) {
             if (!valueLabel.isBooleanType()) {

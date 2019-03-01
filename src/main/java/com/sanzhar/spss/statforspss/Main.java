@@ -11,7 +11,7 @@ public class Main {
     final static Logger LOGGER = Logger.getLogger(Main.class);
     final static String DATA_FOLDER = "c:\\temp\\spssTest";
     final static String SYNTAX_FOLDER = DATA_FOLDER + "\\syntax";
-    final static String XLS_FILE_SRC = DATA_FOLDER + "\\data.xls";
+    final static String XLS_FILE_SRC = DATA_FOLDER + "\\data.xlsx";
 
     public static void main(String[] args) throws Exception {
 
@@ -29,10 +29,12 @@ public class Main {
         Propers propers = new Propers(XLS_FILE_SRC, SYNTAX_FOLDER, tableInfos);
 
         WorkbookWriter workbookWriter = new WorkbookWriter(tableInfos);
-        workbookWriter.writeWorkbook();
+        if (1 == 1) {
+            workbookWriter.writeWorkbook();
+        }
 
         if (1 == 1) {
-            return;
+            //return;
         }
 
         MainFileWriter mainFileWriter = new MainFileWriter(propers);

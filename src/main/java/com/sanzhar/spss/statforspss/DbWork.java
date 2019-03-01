@@ -41,7 +41,7 @@ public class DbWork {
             ResultSet rs = statement.executeQuery(query);
             int columnCount = rs.getMetaData().getColumnCount();
             int r = 0;
-            Set set = new HashSet();
+            //Set set = new HashSet();
             while (rs.next()) {
                 List row = new ArrayList();
                 int columnUndex = 0;
@@ -70,7 +70,7 @@ public class DbWork {
                 r++;
                 data.add(row);
             }
-            LOGGER.debug("set=" + set);
+            //LOGGER.debug("set=" + set);
             
         } catch (SQLException e) {
             LOGGER.error("error in getColumnNamesAndComments", e);

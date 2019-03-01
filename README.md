@@ -9,6 +9,8 @@ Format: `yy.mm.dd.idx`
 `idx` - sequence number, starts from 1
 
 History of changes (grows up)
+ver. 19.03.01.01
+	+ Bug fixing
 ver. 19.02.28.02
 	+ Work with excel files
 ver. 19.02.28.01
