@@ -36,6 +36,22 @@ public class FilesWriter {
         return command;
     }
 
+    public String getFormatCommand() {
+        final List<VariableLabel> colNamesAndComments = tableInfo.getColumnNamesAndComments();
+        StringBuilder stb = new StringBuilder();
+        for (VariableLabel colNamesAndComment : colNamesAndComments) {
+            String comment = colNamesAndComment.getColumnComment();
+            if (colNamesAndComment.getColumnName().trim().endsWith("_date")
+                    || colNamesAndComment.getColumnName().equals("date_birth")) {
+                //comment = colNamesAndComment.getColumnName();
+                //ALTER TYPE  VAR00002 (edate10).
+                stb.append("ALTER TYPE " + colNamesAndComment.getColumnName() + " (edate10" + ").\r\n");
+            }
+        }
+        //LOGGER.debug("stb = " + stb);
+        return stb.toString();
+    }
+
     public String getVarLabelCommand() {
         final List<VariableLabel> colNamesAndComments = tableInfo.getColumnNamesAndComments();
         StringBuilder stb = new StringBuilder("VARIABLE LABELS\r\n");
@@ -98,10 +114,12 @@ public class FilesWriter {
     }
 
     public void writeToFile() {
-       
+
         String file = this.syntaxFolder + File.separator + this.tableInfo.getFileSyntaxName();
         StringBuilder stb = new StringBuilder();
         stb.append(getGetDataCommand());
+        stb.append("\r\n");
+        stb.append(getFormatCommand());
         stb.append("\r\n");
         stb.append(getVarLabelCommand());
         stb.append("\r\n");

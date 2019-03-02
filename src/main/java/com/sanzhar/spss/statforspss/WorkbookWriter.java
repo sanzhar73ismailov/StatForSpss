@@ -1,9 +1,11 @@
 package com.sanzhar.spss.statforspss;
 
-import com.sanzhar.spss.statforspss.excelwrite.examples.Contact;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
@@ -60,7 +62,7 @@ public class WorkbookWriter {
 
     }
 
-    public void writeSheet(TableInfo tableInfo, Sheet sheet) throws SQLException {
+    public void writeSheet(TableInfo tableInfo, Sheet sheet) throws Exception {
         //final List<List> data = DbWork.getDataFromTable("ovarian_general_data");
         final List<List> data = DbWork.getDataFromTable(tableInfo.getTable());
         // Create Other rows and cells with contacts data
@@ -79,33 +81,60 @@ public class WorkbookWriter {
                 if (value != null) {
                     valAsString = value.toString();
                 }
-//                if(value != null){
-//                   row.createCell(column++).setCellValue(value.toString());
-//                }else{
-//                    row.createCell(column++).setCellValue("");
-//                }
-                //Cell cell = row.createCell(column++);
                 String dbType = variableLabel.getDbDataType();
                 if (dbType.equals("int") || dbType.equals("double")) {
                     //cell.setCellType(CellType.NUMERIC);
-                    if(valAsString.trim().isEmpty()){
+                    if (valAsString.trim().isEmpty()) {
                         valAsString = "-1";
                     }
                     row.createCell(column++, CellType.NUMERIC).setCellValue(Double.parseDouble(valAsString));
-                    //row.createCell(column++, CellType.NUMERIC).setCellValue(valAsString);
-
-                } else {
-                    //cell.setCellType(CellType.STRING
-                    //       cell.setCellValue(valAsString);
+                    if (dbType.equals("date")) {
+                        valAsString = formatDate(valAsString);
+                    }else if(dbType.equals("timestamp")){
+                        valAsString = formatDate(valAsString);
+                    }
                     row.createCell(column++, CellType.NUMERIC).setCellValue(valAsString);
                 }
-
             }
+            //System.out.println("--------- = ");
         }
-        //System.out.println("--------- = ");
+
+    }
+    
+    /**
+     * @param mysqlDate - String with format yyyy-MM-dd
+     * @return - String with format dd.MM.yyyy
+     * @throws ParseException 
+     */
+    static String formatDate(String mysqlDate) throws ParseException{
+        if(mysqlDate == null || mysqlDate.trim().isEmpty()){
+            return "";
+        }
+        Date date =  new SimpleDateFormat("yyyy-MM-dd").parse(mysqlDate);
+        return new SimpleDateFormat("dd.MM.yyyy").format(date);
+    }
+    
+    /**
+     * 
+     * @param mysqlTimeStamp - String with format yyyy-MM-dd hh:mm:ss
+     * @return - String with format dd.MM.yyyy
+     * @throws ParseException 
+     */
+    static String formatTimeStamp(String mysqlTimeStamp) throws ParseException{
+        //2017-04-02 05:33:11.0
+        if(mysqlTimeStamp == null || mysqlTimeStamp.trim().isEmpty()){
+            return "";
+        }
+        Date date =  new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(mysqlTimeStamp);
+        return new SimpleDateFormat("dd.MM.yyyy").format(date);
     }
 
-    public void mainTemp(String[] args) throws IOException, InvalidFormatException {
+    public static void main(String[] args) throws Exception{
+        System.out.println("args = " + formatDate("1987-10-01"));
+        System.out.println("args = " + formatDate("2013-11-28"));
+        
+        System.out.println("args = " + formatTimeStamp("2017-04-02 07:33:11"));
+        
         /*
         Workbook workbook = new XSSFWorkbook();
         Sheet sheet = workbook.createSheet("Contacts");
