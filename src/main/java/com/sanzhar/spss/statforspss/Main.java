@@ -13,6 +13,7 @@ public class Main {
     final static Logger LOGGER = Logger.getLogger(Main.class);
     public final static String DATA_FOLDER = "c:\\temp\\spssTest";
     final static String SYNTAX_FOLDER = DATA_FOLDER + "\\syntax";
+    public final static String REPORT_FOLDER = DATA_FOLDER + "\\reportdir";
     public final static String XLS_FILE_SRC = DATA_FOLDER + "\\data.xlsx";
 
     public static void main(String[] args) throws Exception {
@@ -41,17 +42,13 @@ public class Main {
         }
 
         MainFileWriter mainScriptFileWriter = new MainFileWriter(propers);
-        //mainScriptFileWriter.writeMainFile(); //записываем главный скрипт spss
-        //mainScriptFileWriter.writeVariableFiles(); //записываем файлы с описанием переменных для каждой таблицы
+        mainScriptFileWriter.writeMainFile(); //записываем главный скрипт spss
+        mainScriptFileWriter.writeVariableFiles(); //записываем файлы с описанием переменных для каждой таблицы
         mainScriptFileWriter.writeDescrQuantFiles();//записываем файлы с описат. статистикой для колич. показателей
+        mainScriptFileWriter.writeDescrFreqFiles();
         
 
-        // final TableInfo tableInfo = new TableInfo("ovarian_general_data");
-        // final List<VariableLabel> columnNamesAndComments = tableInfo.getColumnNamesAndComments();
-        //System.out.println("columnNamesAndComments = " + columnNamesAndComments);
-        // final List<ValueLabel> valueLabels = tableInfo.getValueLabels();
-        //System.out.println("valueLabels = " + valueLabels);
-        //System.out.println("str = " + str);
+
         LOGGER.debug("FINISH");
 
     }

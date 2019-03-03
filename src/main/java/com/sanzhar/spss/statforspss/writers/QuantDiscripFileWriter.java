@@ -45,17 +45,11 @@ public class QuantDiscripFileWriter extends SpssFileWriter {
         return stb.toString();
     }
 
-    private String getOutputExportCommand() {
-        return "OUTPUT EXPORT\n"
-                + "  /CONTENTS EXPORT=VISIBLE  LAYERS=PRINTSETTING  MODELVIEWS=PRINTSETTING\n"
-                + "  /XLS  DOCUMENTFILE=xls_file\n"
-                + "     OPERATION=CREATEFILE\n"
-                + "     LOCATION=LASTCOLUMN  NOTESCAPTIONS=YES.";
-    }
+    
 
     @Override
     void writeToFile() {
-        String file = this.syntaxFolder + File.separator + this.tableInfo.getFileSyntaxName() + "_quant";
+        String file = this.syntaxFolder + File.separator + this.tableInfo.getFileQuantDescrSyntaxName();
         StringBuilder stb = new StringBuilder();
         stb.append("OUTPUT NEW NAME =report_output.");
         stb.append("\r\n");
@@ -64,8 +58,6 @@ public class QuantDiscripFileWriter extends SpssFileWriter {
         stb.append(getKolmogSmirnovCommand());
         stb.append("\r\n");
         stb.append(getOutputExportCommand());
-        stb.append("\r\n");
-        stb.append("OUTPUT CLOSE NAME =report_output.");
         stb.append("\r\n");
         Util.writeToFile(file, stb.toString());
     }

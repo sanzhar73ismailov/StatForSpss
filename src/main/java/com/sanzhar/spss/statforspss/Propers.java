@@ -7,12 +7,12 @@ package com.sanzhar.spss.statforspss;
 public class Propers {
 
     private final String xlsFileSrc;
-    private final String folder;
+    private final String syntaxFolder;
     private final TableInfo[] tableInfos;
 
     public Propers(String xlsFileSrc, String folder, TableInfo[] tableInfos) {
         this.xlsFileSrc = xlsFileSrc;
-        this.folder = folder;
+        this.syntaxFolder = folder;
         this.tableInfos = tableInfos;
     }
 
@@ -20,8 +20,8 @@ public class Propers {
         return xlsFileSrc;
     }
 
-    public String getFolder() {
-        return folder;
+    public String getSyntaxFolder() {
+        return syntaxFolder;
     }
 
     public TableInfo[] getTableInfos() {

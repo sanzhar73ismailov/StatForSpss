@@ -20,4 +20,13 @@ public abstract class SpssFileWriter {
 
     abstract void writeToFile();
 
+    protected String getOutputExportCommand() {
+        return "OUTPUT EXPORT\n"
+                + "  /CONTENTS EXPORT=VISIBLE  LAYERS=PRINTSETTING  MODELVIEWS=PRINTSETTING\r\n"
+                + "  /XLS  DOCUMENTFILE=xls_file\r\n"
+                + "     OPERATION=CREATEFILE\r\n"
+                + "     LOCATION=LASTCOLUMN  NOTESCAPTIONS=YES.\r\n"
+                + "OUTPUT CLOSE NAME =report_output.\r\n";
+    }
+
 }

@@ -16,12 +16,19 @@ public class TableInfo {
     private List<ValueLabel> valueLabels;
     private final int number;
     private final String fileSyntaxName;
+    private final String fileQuantDescrSyntaxName;
+    private final String fileQualDescrSyntaxName;
 
 
     public TableInfo(String table, int number) {
         this.table = table;
         this.number = number;
-        this.fileSyntaxName = String.format("%02d", number) + "_" + table + ".sps"; 
+        
+        String baseName = String.format("%02d", number) + "_" + table;
+        
+        this.fileSyntaxName = baseName + ".sps"; 
+        this.fileQuantDescrSyntaxName = baseName + "_quant.sps"; 
+        this.fileQualDescrSyntaxName = baseName + "_qual.sps"; 
         init();
     }
 
@@ -67,7 +74,13 @@ public class TableInfo {
     public String getFileSyntaxName() {
         return fileSyntaxName;
     }
-    
-    
+
+    public String getFileQuantDescrSyntaxName() {
+        return fileQuantDescrSyntaxName;
+    }
+
+    public String getFileQualDescrSyntaxName() {
+        return fileQualDescrSyntaxName;
+    }
 
 }
