@@ -94,7 +94,7 @@ public class WorkbookWriter {
                     row.createCell(column++, CellType.NUMERIC).setCellValue(Double.parseDouble(valAsString));
                     if (dbType.equals("date")) {
                         valAsString = formatDate(valAsString);
-                    }else if(dbType.equals("timestamp")){
+                    } else if (dbType.equals("timestamp")) {
                         valAsString = formatDate(valAsString);
                     }
                     row.createCell(column++, CellType.NUMERIC).setCellValue(valAsString);
@@ -104,82 +104,33 @@ public class WorkbookWriter {
         }
 
     }
-    
+
     /**
      * @param mysqlDate - String with format yyyy-MM-dd
      * @return - String with format dd.MM.yyyy
-     * @throws ParseException 
+     * @throws ParseException
      */
-    static String formatDate(String mysqlDate) throws ParseException{
-        if(mysqlDate == null || mysqlDate.trim().isEmpty()){
+    static String formatDate(String mysqlDate) throws ParseException {
+        if (mysqlDate == null || mysqlDate.trim().isEmpty()) {
             return "";
         }
-        Date date =  new SimpleDateFormat("yyyy-MM-dd").parse(mysqlDate);
+        Date date = new SimpleDateFormat("yyyy-MM-dd").parse(mysqlDate);
         return new SimpleDateFormat("dd.MM.yyyy").format(date);
     }
-    
+
     /**
-     * 
+     *
      * @param mysqlTimeStamp - String with format yyyy-MM-dd hh:mm:ss
      * @return - String with format dd.MM.yyyy
-     * @throws ParseException 
+     * @throws ParseException
      */
-    static String formatTimeStamp(String mysqlTimeStamp) throws ParseException{
+    static String formatTimeStamp(String mysqlTimeStamp) throws ParseException {
         //2017-04-02 05:33:11.0
-        if(mysqlTimeStamp == null || mysqlTimeStamp.trim().isEmpty()){
+        if (mysqlTimeStamp == null || mysqlTimeStamp.trim().isEmpty()) {
             return "";
         }
-        Date date =  new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(mysqlTimeStamp);
+        Date date = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(mysqlTimeStamp);
         return new SimpleDateFormat("dd.MM.yyyy").format(date);
     }
 
-    public static void main(String[] args) throws Exception{
-        System.out.println("args = " + formatDate("1987-10-01"));
-        System.out.println("args = " + formatDate("2013-11-28"));
-        
-        System.out.println("args = " + formatTimeStamp("2017-04-02 07:33:11"));
-        
-        /*
-        Workbook workbook = new XSSFWorkbook();
-        Sheet sheet = workbook.createSheet("Contacts");
-
-        Font headerFont = workbook.createFont();
-        headerFont.setBold(true);
-        headerFont.setFontHeightInPoints((short) 14);
-        headerFont.setColor(IndexedColors.RED.getIndex());
-
-        CellStyle headerCellStyle = workbook.createCellStyle();
-        headerCellStyle.setFont(headerFont);
-
-        // Create a Row
-        Row headerRow = sheet.createRow(0);
-
-        for (int i = 0; i < columns.length; i++) {
-            Cell cell = headerRow.createCell(i);
-            cell.setCellValue(columns[i]);
-            cell.setCellStyle(headerCellStyle);
-        }
-
-        // Create Other rows and cells with contacts data
-        int rowNum = 1;
-
-        for (Contact contact : contacts) {
-            Row row = sheet.createRow(rowNum++);
-            row.createCell(0).setCellValue(contact.firstName);
-            row.createCell(1).setCellValue(contact.lastName);
-            row.createCell(2).setCellValue(contact.email);
-            row.createCell(3).setCellValue(contact.dateOfBirth);
-        }
-
-        // Resize all columns to fit the content size
-        for (int i = 0; i < columns.length; i++) {
-            sheet.autoSizeColumn(i);
-        }
-
-        // Write the output to a file
-        FileOutputStream fileOut = new FileOutputStream("contacts.xlsx");
-        workbook.write(fileOut);
-        fileOut.close();
-         */
-    }
 }

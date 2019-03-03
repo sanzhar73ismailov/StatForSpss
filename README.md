@@ -9,6 +9,8 @@ Format: `yy.mm.dd.idx`
 `idx` - sequence number, starts from 1
 
 History of changes (grows up)
+ver. 19.03.03.03
+	+ commons-math3 usage
 ver. 19.03.03.02
 	+ Quality (frequency) descrpt files generation
 ver. 19.03.03.01

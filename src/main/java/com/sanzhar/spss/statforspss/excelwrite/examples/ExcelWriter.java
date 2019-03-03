@@ -1,4 +1,4 @@
-package com.sanzhar.spss.statforspss.excelwrite;
+package com.sanzhar.spss.statforspss.excelwrite.examples;
 
 import com.sanzhar.spss.statforspss.excelwrite.examples.Contact;
 import java.io.FileOutputStream;
