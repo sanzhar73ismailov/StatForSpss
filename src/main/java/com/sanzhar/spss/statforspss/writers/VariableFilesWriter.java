@@ -1,5 +1,10 @@
-package com.sanzhar.spss.statforspss;
+package com.sanzhar.spss.statforspss.writers;
 
+import com.sanzhar.spss.statforspss.KeyVal;
+import com.sanzhar.spss.statforspss.TableInfo;
+import com.sanzhar.spss.statforspss.Util;
+import com.sanzhar.spss.statforspss.ValueLabel;
+import com.sanzhar.spss.statforspss.VariableLabel;
 import java.io.*;
 import java.util.List;
 import org.apache.log4j.Logger;
@@ -8,20 +13,15 @@ import org.apache.log4j.Logger;
  *
  * @author admin
  */
-public class FilesWriter {
+public class VariableFilesWriter extends SpssFileWriter {
 
-    final static Logger LOGGER = Logger.getLogger(FilesWriter.class);
-    private final String syntaxFolder;
-    private final TableInfo tableInfo;
-    private final String xlsFile;
+    final static Logger LOGGER = Logger.getLogger(VariableFilesWriter.class);
 
-    public FilesWriter(String xlsFile, String folder, TableInfo info) {
-        this.xlsFile = xlsFile;
-        this.syntaxFolder = folder;
-        this.tableInfo = info;
+    public VariableFilesWriter(String xlsFile, String syntaxFolder, TableInfo tableInfo) {
+        super(xlsFile, syntaxFolder, tableInfo);
     }
 
-    public String getGetDataCommand() {
+    private String getGetDataCommand() {
         String tabName = tableInfo.getTable(); // tabName is the same as table name in DB
         String fName = new File(xlsFile).getName();
         String command = String.format("GET DATA /TYPE=XLSX \r\n"
@@ -36,7 +36,7 @@ public class FilesWriter {
         return command;
     }
 
-    public String getFormatCommand() {
+    private String getFormatCommand() {
         final List<VariableLabel> colNamesAndComments = tableInfo.getColumnNamesAndComments();
         StringBuilder stb = new StringBuilder();
         for (VariableLabel colNamesAndComment : colNamesAndComments) {
@@ -52,7 +52,7 @@ public class FilesWriter {
         return stb.toString();
     }
 
-    public String getVarLabelCommand() {
+    private String getVarLabelCommand() {
         final List<VariableLabel> colNamesAndComments = tableInfo.getColumnNamesAndComments();
         StringBuilder stb = new StringBuilder("VARIABLE LABELS\r\n");
         for (VariableLabel colNamesAndComment : colNamesAndComments) {
@@ -68,7 +68,7 @@ public class FilesWriter {
         return stb.toString();
     }
 
-    public String getValueLabelCommand() {
+    private String getValueLabelCommand() {
         final List<ValueLabel> valLabels = tableInfo.getValueLabels();
         StringBuilder stb = new StringBuilder("VALUE LABELS\r\n");
         //add boolean types
@@ -100,7 +100,7 @@ public class FilesWriter {
         return stb.toString();
     }
 
-    public String getMissingVals() {
+    private String getMissingVals() {
         final List<VariableLabel> colNamesAndComments = tableInfo.getColumnNamesAndComments();
         StringBuilder stb = new StringBuilder("MISSING VALUES\r\n");
         for (VariableLabel colNamesAndComment : colNamesAndComments) {
@@ -113,8 +113,8 @@ public class FilesWriter {
         return stb.toString();
     }
 
+    @Override
     public void writeToFile() {
-
         String file = this.syntaxFolder + File.separator + this.tableInfo.getFileSyntaxName();
         StringBuilder stb = new StringBuilder();
         stb.append(getGetDataCommand());

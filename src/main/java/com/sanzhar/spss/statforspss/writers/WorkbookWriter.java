@@ -1,5 +1,9 @@
-package com.sanzhar.spss.statforspss;
+package com.sanzhar.spss.statforspss.writers;
 
+import com.sanzhar.spss.statforspss.DbWork;
+import com.sanzhar.spss.statforspss.Main;
+import com.sanzhar.spss.statforspss.TableInfo;
+import com.sanzhar.spss.statforspss.VariableLabel;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;

@@ -9,6 +9,8 @@ Format: `yy.mm.dd.idx`
 `idx` - sequence number, starts from 1
 
 History of changes (grows up)
+ver. 19.03.03.01
+	+ Quant descrpt files generation
 ver. 19.03.02.01
 	+ Formatting dates in spps files
 ver. 19.03.01.01

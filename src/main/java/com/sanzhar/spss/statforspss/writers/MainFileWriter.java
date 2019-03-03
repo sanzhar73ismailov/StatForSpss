@@ -1,5 +1,9 @@
-package com.sanzhar.spss.statforspss;
+package com.sanzhar.spss.statforspss.writers;
 
+import com.sanzhar.spss.statforspss.Main;
+import com.sanzhar.spss.statforspss.Propers;
+import com.sanzhar.spss.statforspss.TableInfo;
+import com.sanzhar.spss.statforspss.Util;
 import java.io.File;
 import org.apache.log4j.Logger;
 
@@ -22,8 +26,13 @@ public class MainFileWriter {
         }
     }
 
-    private void writeFile(TableInfo tableInfo) {
-        FilesWriter filesWriter = new FilesWriter(propers.getXlsFileSrc(), propers.getFolder(), tableInfo);
+    private void writeVariableFile(TableInfo tableInfo) {
+        SpssFileWriter filesWriter = new VariableFilesWriter(propers.getXlsFileSrc(), propers.getFolder(), tableInfo);
+        filesWriter.writeToFile();
+    }
+    
+    private void writeQuantFile(TableInfo tableInfo) {
+        SpssFileWriter filesWriter = new QuantDiscripFileWriter(propers.getXlsFileSrc(), propers.getFolder(), tableInfo);
         filesWriter.writeToFile();
     }
 
@@ -36,9 +45,15 @@ public class MainFileWriter {
         Util.writeToFile(propers.getFolder() + "\\00_script_general.sps", stb.toString());
     }
 
-    public void writeFiles() {
+    public void writeVariableFiles() {
         for (TableInfo tableInfo : tableInfos) {
-            writeFile(tableInfo);
+            writeVariableFile(tableInfo);
+        }
+    }
+    
+    public void writeDescrQuantFiles() {
+        for (TableInfo tableInfo : tableInfos) {
+            writeQuantFile(tableInfo);
         }
     }
 }
