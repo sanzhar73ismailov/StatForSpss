@@ -9,6 +9,8 @@ Format: `yy.mm.dd.idx`
 `idx` - sequence number, starts from 1
 
 History of changes (grows up)
+ver. 19.03.06.01
+	+ read SPSS csv files for following testing
 ver. 19.03.05.01
 	+ read SPSS output txt file for following testing
 ver. 19.03.04.03
