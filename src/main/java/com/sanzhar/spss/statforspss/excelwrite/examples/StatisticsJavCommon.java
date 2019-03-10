@@ -18,7 +18,7 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 public class StatisticsJavCommon {
 
     static final double[] TEST_DATA = {1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1, 8, 9, 0, 6, 5, 4, 5, 6};
-
+    static final double PROC_DIFF_MAX = 0.05D;
     private static final String FILE_NAME = "S:\\NetBeansProjects\\StatForSpss\\testdata\\freelancerDescrReport.txt";
     private static final String CSV_FILE_NAME = "S:\\NetBeansProjects\\StatForSpss\\testdata\\freelancers.csv";
 
@@ -26,11 +26,34 @@ public class StatisticsJavCommon {
         //kolmogor();
         //normalDistr();
         //readSpssOutputFile();
+        //final List<Variable> readSpssDataCsvFile = readSpssDataCsvFile();
+         compareSppssVsCommon();
+
+        double x1 = 2548200d;
+        double x2 = 2548177.92175;
+        boolean isEq = isEqual(x1, x2);
+        System.out.println("isEq = " + isEq);
+
+    }
+
+    static void compareSppssVsCommon() {
+        //final List<StatResult> statResultsFromSpssOutputFile = readSpssOutputFile();
         final List<Variable> readSpssDataCsvFile = readSpssDataCsvFile();
         for (Variable variable : readSpssDataCsvFile) {
-            System.out.println("variable = " + variable);
+            if (variable.getName().equals("id")) {
+                continue;
+            }
+            if (!variable.getName().equals("income_2011")) {
+                continue;
+            }
+            
+            //StatResult result = getResultByVarName(statResultsFromSpssOutputFile, FILE_NAME);
+            DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(variable.getValues());
+            System.out.println("descriptiveStatistics = " + descriptiveStatistics);
+            
+            
+            // System.out.println("variable = " + variable);
         }
-
     }
 
     public static List<Variable> readSpssDataCsvFile() {
@@ -109,7 +132,8 @@ public class StatisticsJavCommon {
                 result.setStErr(convertToDouble(vals[6]));
                 result.setStDev(convertToDouble(vals[7]));
                 result.setVariance(convertToDouble(vals[8]));
-                System.out.println("result = " + result);
+                results.add(result);
+                //System.out.println("result = " + result);
                 //System.out.println(sCurrentLine);
                 //System.out.println("vals = " + Arrays.toString(vals));
 
@@ -119,6 +143,15 @@ public class StatisticsJavCommon {
         }
         return results;
 
+    }
+
+    static StatResult getResultByVarName(List<StatResult> readSpssOutputFile, String varName) {
+        for (StatResult statResult : readSpssOutputFile) {
+            if (statResult.getVarName().equals(varName)) {
+                return statResult;
+            }
+        }
+        return null;
     }
 
     static double convertToDouble(String text) {
@@ -161,6 +194,14 @@ public class StatisticsJavCommon {
         System.out.println("obj.sample() = " + obj.sample());
 
         //11.047341134912415
+    }
+
+    static boolean isEqual(double x, double y) {
+        double diff = Math.abs(x - y);
+        //System.out.println("diff = " + diff);
+        double proc = (diff * 100) / Math.max(x, y);
+        //System.out.println("proc = " + proc);
+        return PROC_DIFF_MAX > proc;
     }
 
 }
