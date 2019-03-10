@@ -22,18 +22,23 @@ public class StatisticsJavCommon {
     private static final String FILE_NAME = "S:\\NetBeansProjects\\StatForSpss\\testdata\\freelancerDescrReport.txt";
     private static final String CSV_FILE_NAME = "S:\\NetBeansProjects\\StatForSpss\\testdata\\freelancers.csv";
 
+    private static final String KOLMOGOR_FILE_NAME = "S:\\NetBeansProjects\\StatForSpss\\testdata\\vars100KolmogorReport.txt";
+    private static final String CSV_FILE_NAME_100_VARS = "S:\\NetBeansProjects\\StatForSpss\\testdata\\data100vars_for_kolmogor.csv";
+
     public static void main(String[] args) {
         //kolmogor();
         //normalDistr();
         //readSpssOutputFile();
         //final List<Variable> readSpssDataCsvFile = readSpssDataCsvFile();
-         compareSppssVsCommon();
-
-        double x1 = 2548200d;
-        double x2 = 2548177.92175;
-        boolean isEq = isEqual(x1, x2);
-        System.out.println("isEq = " + isEq);
-
+        //compareSppssVsCommon();
+        final List<KolomogorStatResult> readSpssKolmogOutputFile = readSpssKolmogOutputFile(KOLMOGOR_FILE_NAME);
+        for (KolomogorStatResult kolomogorStatResult : readSpssKolmogOutputFile) {
+            System.out.println("kolomogorStatResult = " + kolomogorStatResult);
+        }
+//        double x1 = 2548200d;
+//        double x2 = 2548177.92175;
+//        boolean isEq = isEqual(x1, x2);
+//        System.out.println("isEq = " + isEq);
     }
 
     static void compareSppssVsCommon() {
@@ -43,22 +48,43 @@ public class StatisticsJavCommon {
             if (variable.getName().equals("id")) {
                 continue;
             }
-            if (!variable.getName().equals("income_2011")) {
-                continue;
+            if (!variable.getName().equals("income_2010")) {
+                //continue;
             }
-            
+            System.out.println("*****variable = " + variable);
+
             //StatResult result = getResultByVarName(statResultsFromSpssOutputFile, FILE_NAME);
             DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(variable.getValues());
-            System.out.println("descriptiveStatistics = " + descriptiveStatistics);
-            
-            
+
+            //System.out.println("descriptiveStatistics = " + descriptiveStatistics);
+            double mean = descriptiveStatistics.getMean();
+            double stDev = descriptiveStatistics.getStandardDeviation();
+            NormalDistribution unitNormal = new NormalDistribution(mean, stDev);
+            final double kolmogorovSmirnovTest
+                    = TestUtils.kolmogorovSmirnovTest(unitNormal, variable.getValues(), false);
+
+            //System.out.println("kolmogorovSmirnovTest=" + Math.round(kolmogorovSmirnovTest,));
             // System.out.println("variable = " + variable);
         }
     }
 
     public static List<Variable> readSpssDataCsvFile() {
+        return readSpssDataCsvFile(CSV_FILE_NAME);
+    }
+    
+    public static List<Variable> readKolmogorSpssDataCsvFile() {
+        return readSpssDataCsvFile(CSV_FILE_NAME_100_VARS);
+    }
+    
+    public static List<KolomogorStatResult> readSpssKolmogOutputFile100Vars(){
+        return readSpssKolmogOutputFile(KOLMOGOR_FILE_NAME);
+    }
+    
+    
+
+    public static List<Variable> readSpssDataCsvFile(String fileName) {
         List<Variable> dataVars = new ArrayList<>();
-        try (BufferedReader br = new BufferedReader(new FileReader(CSV_FILE_NAME))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String sCurrentLine;
             int rowNum = 0;
             List<String> fields = new ArrayList<>();
@@ -145,8 +171,70 @@ public class StatisticsJavCommon {
 
     }
 
+    public static List<KolomogorStatResult> readSpssKolmogOutputFile(String fileName) {
+        List<KolomogorStatResult> kolmogorResults = new ArrayList<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            String sCurrentLine;
+            int rowNum = 0;
+            List<String> varNames = new ArrayList<>();
+            List<Double> rowsStat = new ArrayList<>();
+            List<Double> rowsP = new ArrayList<>();
+            while ((sCurrentLine = br.readLine()) != null) {
+                rowNum++;
+                StatResult result = new StatResult();
+                if (sCurrentLine.trim().isEmpty()) {
+                    continue;
+                }
+                sCurrentLine = sCurrentLine.trim();
+
+                
+                if (varNames.isEmpty()) {
+                    final String[] vals = sCurrentLine.split("\t");
+                    for (String val : vals) {
+                        varNames.add(val);
+                    }
+                    continue;
+                } else if (sCurrentLine.startsWith("Статистика Z Колмогорова-Смирнова")) {
+                    sCurrentLine = sCurrentLine.replace("Статистика Z Колмогорова-Смирнова", "").trim();
+                    final String[] vals = sCurrentLine.split("\t");
+                    for (String val : vals) {
+                        rowsStat.add(convertToDouble(val));
+                    }
+                } else if (sCurrentLine.startsWith("Асимпт. знч. (двухсторонняя)")) {
+                    sCurrentLine = sCurrentLine.replace("Асимпт. знч. (двухсторонняя)", "").trim();
+                    final String[] vals = sCurrentLine.split("\t");
+                    for (String val : vals) {
+                        rowsP.add(convertToDouble(val));
+                    }
+                }
+            }
+            for (int i = 0; i < varNames.size(); i++) {
+                String varName = varNames.get(i);
+                KolomogorStatResult statResult = new KolomogorStatResult();
+                kolmogorResults.add(statResult);
+                statResult.setVarName(varName);
+                statResult.setZ(rowsStat.get(i));
+                statResult.setP(rowsP.get(i));
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return kolmogorResults;
+
+    }
+
     static StatResult getResultByVarName(List<StatResult> readSpssOutputFile, String varName) {
         for (StatResult statResult : readSpssOutputFile) {
+            if (statResult.getVarName().equals(varName)) {
+                return statResult;
+            }
+        }
+        return null;
+    }
+    
+    static KolomogorStatResult getKolmogorResultByVarName(List<KolomogorStatResult> readSpssOutputFile, String varName) {
+        for (KolomogorStatResult statResult : readSpssOutputFile) {
             if (statResult.getVarName().equals(varName)) {
                 return statResult;
             }
@@ -197,11 +285,15 @@ public class StatisticsJavCommon {
     }
 
     static boolean isEqual(double x, double y) {
+        return PROC_DIFF_MAX > procentDif(x , y);
+    }
+    
+    static double procentDif(double x, double y) {
         double diff = Math.abs(x - y);
         //System.out.println("diff = " + diff);
         double proc = (diff * 100) / Math.max(x, y);
         //System.out.println("proc = " + proc);
-        return PROC_DIFF_MAX > proc;
+        return proc;
     }
 
 }

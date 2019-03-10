@@ -9,6 +9,8 @@ Format: `yy.mm.dd.idx`
 `idx` - sequence number, starts from 1
 
 History of changes (grows up)
+ver. 19.03.10.02
+	+ testing Kolmogorov-Smirnov properties SPSS and Common library 
 ver. 19.03.10.01
 	+ testing descriptive properties SPSS and Common library 
 ver. 19.03.06.01

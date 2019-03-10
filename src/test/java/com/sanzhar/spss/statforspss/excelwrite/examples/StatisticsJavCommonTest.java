@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.sanzhar.spss.statforspss.excelwrite.examples;
 
-import static com.sanzhar.spss.statforspss.excelwrite.examples.StatisticsJavCommon.getResultByVarName;
-import static com.sanzhar.spss.statforspss.excelwrite.examples.StatisticsJavCommon.readSpssDataCsvFile;
-import static com.sanzhar.spss.statforspss.excelwrite.examples.StatisticsJavCommon.readSpssOutputFile;
+import static com.sanzhar.spss.statforspss.excelwrite.examples.StatisticsJavCommon.*;
 import java.util.List;
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.inference.TestUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -17,10 +12,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author admin
- */
 public class StatisticsJavCommonTest {
 
     public StatisticsJavCommonTest() {
@@ -43,7 +34,7 @@ public class StatisticsJavCommonTest {
     }
 
 
-    @Test
+    //@Test
     public void testCompareSppssVsCommon() {
         final List<StatResult> statResultsFromSpssOutputFile = readSpssOutputFile();
         assertNotNull(statResultsFromSpssOutputFile);
@@ -58,11 +49,6 @@ public class StatisticsJavCommonTest {
             if (varName.equals("id")) {
                 continue;
             }
-//            if (!variable.getName().equals("income_2011")) {
-//                continue;
-//            }
-            
-
             StatResult statResult = getResultByVarName(statResultsFromSpssOutputFile, variable.getName());
             assertNotNull(statResult);
             DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(variable.getValues());
@@ -75,12 +61,57 @@ public class StatisticsJavCommonTest {
             double stErr = descriptiveStatistics.getStandardDeviation() / Math.sqrt(descriptiveStatistics.getN());
             assertTrue(StatisticsJavCommon.isEqual(statResult.getStErr(), stErr));
             assertTrue(StatisticsJavCommon.isEqual(statResult.getVariance(), descriptiveStatistics.getVariance()));
-   
 
             System.out.println("descriptiveStatistics = " + descriptiveStatistics);
-
-            // System.out.println("variable = " + variable);
         }
+    }
+    
+    @Test
+    public void testCompareKolmogorSpssVsCommon() {
+        final List<KolomogorStatResult> varResults = readSpssKolmogOutputFile100Vars();
+        assertNotNull(varResults);
+        assertTrue(varResults.size() > 0);
+        final List<Variable> vars = readKolmogorSpssDataCsvFile();
+        assertNotNull(vars);
+        assertTrue(vars.size() > 0);
+        double minDif = 0;
+        double maxDif = 0;
+        
+        for (int i = 0; i < vars.size(); i++) {
+            Variable variable = vars.get(i);
+            assertNotNull(variable);
+            String variableName = variable.getName();
+            
+            
+            System.out.println("variableName = " + variableName);
+            DescriptiveStatistics descriptiveStatistics = new DescriptiveStatistics(variable.getValues());
+            double mean = descriptiveStatistics.getMean();
+            double stDev = descriptiveStatistics.getStandardDeviation();
+            NormalDistribution unitNormal = new NormalDistribution(mean, stDev);
+            final double kolmogorovSmirnovTest
+                    = TestUtils.kolmogorovSmirnovTest(unitNormal, variable.getValues(), false);
+            KolomogorStatResult kolomogorStatResult = getKolmogorResultByVarName(varResults, variableName);
+            //double difAbs = Math.abs(kolmogorovSmirnovTest - kolomogorStatResult.getP());
+            double procDif = procentDif(kolmogorovSmirnovTest, kolomogorStatResult.getP());
+            if(i == 0){
+                minDif = procDif;
+            }
+            
+            if(procDif < minDif){
+                minDif = procDif;
+            }
+            if(procDif > maxDif){
+                maxDif = procDif;
+            }
+            
+            boolean normalDistr = kolmogorovSmirnovTest > 0.01;
+            System.out.println("normalDistr = " + normalDistr);
+            System.out.println("kolomogorStatResult.isNormal() = " + kolomogorStatResult.isNormal());
+            
+            assertTrue(normalDistr == kolomogorStatResult.isNormal());
+        }
+        System.out.println("minDif = " + minDif);
+        System.out.println("maxDif = " + maxDif);
     }
 
 }
